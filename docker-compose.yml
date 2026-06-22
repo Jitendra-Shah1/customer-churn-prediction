@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  # 1. THE BACKEND SERVICE (FastAPI)
+  backend:
+    build:
+      context: ./Backend  # Tells Compose to look inside the Backend folder
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"       # Maps port 8000 of the container to port 8000 of our laptop
+
+  # 2. THE FRONTEND SERVICE (Streamlit)
+  frontend:
+    build:
+      context: ./Frontend # Tells Compose to look inside the Frontend folder
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"       # Maps port 5000 of the container to port 5000 of our laptop
+    depends_on:
+      - backend           # Makes sure the backend starts up before the frontend launches
