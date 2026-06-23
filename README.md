@@ -26,10 +26,12 @@ customer-churn-prediction/
 │   │   ├── UserInput.py
 │   │   └── response.py
 │   ├── main.py
+│   ├── Dockerfile
 │   └── requirements.txt
 │
 ├── frontend/                 # Streamlit frontend
 │   ├── app.py
+│   ├── Dockerfile
 │   └── requirements.txt
 │
 ├── notebooks/                # Jupyter notebook(s)
@@ -38,10 +40,9 @@ customer-churn-prediction/
 ├── data/                     # dataset(s)
 │   └── customer_churn.csv
 │
+├── docker-compose.yml
 ├── .gitignore
 └── README.md
-
-
 ```
 
 ## Dataset
@@ -80,7 +81,7 @@ Multiple classification algorithms were trained and evaluated:
 - Support Vector Classifier (SVC)
 - Decision Tree Classifier
 - Random Forest Classifier
-- **Gradient Boosting Classifier**  *(final model)*
+- **Gradient Boosting Classifier** *(final model)*
 
 Models were compared on **recall, precision, train accuracy, and test accuracy**, and Gradient Boosting Classifier was selected as the best-performing model overall.
 
@@ -123,6 +124,7 @@ This threshold is used in production (`predict.py`) so that predictions better b
 - **Backend:** FastAPI, Pydantic
 - **ML:** scikit-learn, pandas, numpy
 - **Model serialization:** pickle
+- **Containerization:** Docker, Docker Compose
 
 ## API Endpoints
 
@@ -160,7 +162,42 @@ This threshold is used in production (`predict.py`) so that predictions better b
 
 ## Getting Started
 
-### Backend
+### Option 1: Docker Compose (Recommended)
+
+The easiest way to run the full application is with Docker Compose, which builds and starts both services together.
+
+```bash
+docker-compose up --build
+```
+
+This will start:
+- **Backend** (FastAPI) at `http://localhost:8000`
+- **Frontend** (Streamlit) at `http://localhost:8501`
+
+To stop all services:
+```bash
+docker-compose down
+```
+
+### Option 2: Run Services Individually with Docker
+
+**Backend:**
+```bash
+cd backend
+docker build -t churn-backend .
+docker run -p 8000:8000 churn-backend
+```
+
+**Frontend:**
+```bash
+cd frontend
+docker build -t churn-frontend .
+docker run -p 8501:8501 churn-frontend
+```
+
+### Option 3: Run Locally (Without Docker)
+
+**Backend:**
 ```bash
 cd backend
 python -m venv myenv
@@ -170,7 +207,7 @@ uvicorn main:app --reload
 ```
 API will be available at `http://127.0.0.1:8000`
 
-### Frontend
+**Frontend:**
 ```bash
 cd frontend
 python -m venv myenv
@@ -181,7 +218,7 @@ streamlit run app.py
 
 ## Future Improvements
 
-- Containerize both services with Docker and tie them together with `docker-compose`
-- Replace hardcoded backend URL in the frontend with an environment variable for deployment flexibility
 - Add automated tests for the API and prediction pipeline
 - Track model experiments (e.g. with MLflow) for easier comparison across runs
+- Replace hardcoded backend URL in the frontend with an environment variable for deployment flexibility
+- Deploy containers to a cloud provider (e.g. AWS ECS, GCP Cloud Run, or Railway)
